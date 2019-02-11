@@ -1,9 +1,14 @@
 package us.mattgreen;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Cookbook {
 
     // Hold all the meals that are read in from the file
-    private Meal[] meals = new Meal[100];
+    // private Meal[] meals = new Meal[100];
+    private List<Meal> meals = new ArrayList<Meal>();
+    
     // Hold the next (empty) index in the array
     private int i = 0;
 
@@ -11,8 +16,10 @@ public class Cookbook {
         MealType mealType;
 
         // Do we have room in the array for one more?
-        if (i < meals.length) {
+        // if (i < meals.size()) {
 
+            //  MealType mte = MealType.valueOf(mealNameStr.toUpperCase());
+            
             // Find the correct enum using a switch? Or use .fromValue() instead?
             switch (mealTypeStr) {
                 case "Breakfast":
@@ -39,14 +46,27 @@ public class Cookbook {
             } else {
                 calories = 100;
                 System.out.println("Meal Creation Error: Invalid Calories " + caloriesStr + ", defaulted to 100.");
+            }  
+            // meals[i++] = new Meal(mealType, mealNameStr, calories);
+            // meals.add( new Meal(mealType, mealNameStr, calories));
+            // determine location to add new object
+            Integer i = 0;
+            boolean endLoop = false;
+            while (!endLoop) {
+                if (calories > meals.get(i).getCalories()) {
+                    endLoop = true;
+                } else {
+                    i++;
+                }
             }
-            meals[i++] = new Meal(mealType, mealNameStr, calories);
-        } else {
-            System.out.println("Meal Creation Error: Items exceeded system size.  File has " + i + ", while the system can only handle " + meals.length + ".");
-        }
-    }
+            // add new object
+            meals.add(i, new Meal(mealType, mealNameStr, calories));
+            }
+        // } else {
+        //     System.out.println("Meal Creation Error: Items exceeded system size.  File has " + i + ", while the system can only handle " + meals.length + ".");
+        // }
 
-    public Meal[] getMeals() {
+    public List<Meal> getMeals() {
         return meals;
     }
 
@@ -75,4 +95,5 @@ public class Cookbook {
             }
         }
     }
+
 }

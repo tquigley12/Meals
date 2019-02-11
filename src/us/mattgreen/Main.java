@@ -1,15 +1,30 @@
 package us.mattgreen;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
     private Scanner keyboard;
     private Cookbook cookbook;
+    // add public variables that can be incremented in Cookbook objects
+    public Integer mealTypeTotalCalories = 0;
+    public Integer mealTypeMinCalories = 0;
+    public Integer mealTypeMaxCalories = 0;
+    public Integer mealTypeItemCount = 0;
 
     public Main() {
         keyboard = new Scanner(System.in);
         cookbook = new Cookbook();
+        // variables for break logic
+        String prevMealType = null;
+        Integer mealTypeTotalCalories = 0;
+        Integer mealTypeMinCalories = 0;
+        Integer mealTypeMaxCalories = 0;
+        Integer mealTypeItemCount = 0;
+        double mealTypeMean = 0.0;
 
         FileInput indata = new FileInput("meals_data.csv");
 
@@ -19,6 +34,15 @@ public class Main {
         while ((line = indata.fileReadLine()) != null) {
             String[] fields = line.split(",");
             cookbook.addElementWithStrings(fields[0], fields[1], fields[2]);
+            // control break logic
+            if (!prevMealType.equalsIgnoreCase(fields[0]) && prevMealType != null) {
+                mealTypeTotalCalories = 0;
+                mealTypeMinCalories = 0;
+                mealTypeMaxCalories = 0;
+                mealTypeItemCount = 0;
+            }
+            // copy fields[0] to prevMealType
+            prevMealType = fields[0];
         }
 
         runMenu();
