@@ -154,7 +154,7 @@ public class Cookbook {
     public void controlBreakLine(String prevMealType) {
         StringBuilder str = new StringBuilder();
         str.append(String.format("%-15s", prevMealType));
-        str.append(itemCount);
+        str.append(totalCalories);
         str.append("\t");
         meanCalories = (double) totalCalories/itemCount;
         str.append(String.format("%.4f", meanCalories));
