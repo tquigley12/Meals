@@ -14,45 +14,12 @@ public class Cookbook {
     
     // Variables used for incrementing counts and amounts for control break
     private int totalCalories = 0;
-    private int minCalories = 0;
-    private int maxCalories = 0;
+    private int minCalories = Integer.MAX_VALUE;
+    private int maxCalories = Integer.MIN_VALUE;
     private int itemCount = 0;
     private double meanCalories = 0.0;
 
-    public void addElementWithStrings(String mealTypeStr, String mealNameStr, String caloriesStr) {
-        MealType mealType;
-
-            // Find the correct enum using a switch? Or use .fromValue() instead?
-            switch (mealTypeStr) {
-                case "Breakfast":
-                    mealType = MealType.BREAKFAST;
-                    break;
-                case "Lunch":
-                    mealType = MealType.LUNCH;
-                    break;
-                case "Dinner":
-                    mealType = MealType.DINNER;
-                    break;
-                case "Dessert":
-                    mealType = MealType.DESSERT;
-                    break;
-                default:
-                    mealType = MealType.DINNER;
-                    System.out.println("Meal Creation Error: Invalid Meal Type " + mealTypeStr + ", defaulted to Dinner.");
-            }
-
-            int calories;
-
-            if (caloriesStr.matches("-?\\d+(\\.\\d+)?")) {
-                calories = Integer.parseInt(caloriesStr);
-            } else {
-                calories = 100;
-                System.out.println("Meal Creation Error: Invalid Calories " + caloriesStr + ", defaulted to 100.");
-            }  
-            meals.add( new Meal(mealType, mealNameStr, calories));    
-    }
-
-    public void addElementWithStrings2(String mealTypeStr, String mealNameStr, String caloriesStr) {
+    public void addElementWithStrings(String mealTypeStr, String mealNameStr, String caloriesStr, boolean run2) {
         MealType mealType;
 
             // Find the correct enum using a switch? Or use .fromValue() instead?
@@ -85,29 +52,35 @@ public class Cookbook {
 
             // determine location to add new object
             int index = 0;
-            if (meals.size() > 0) {
-                boolean endLoop = false;
-                while (!endLoop) {
-                    if (index == meals.size()) {
-                        endLoop = true;
-                    } else { if (calories < meals.get(index).getCalories()) {
-                        endLoop = true;
-                    } else {
-                        index++;
+            if (run2) {
+                if (meals.size() > 0) {
+                    boolean endLoop = false;
+                    while (!endLoop) {
+                        if (index == meals.size()) {
+                            endLoop = true;
+                        } else { if (calories < meals.get(index).getCalories()) {
+                            endLoop = true;
+                        } else {
+                            index++;
+                        }
+                        }   
                     }
-                    }   
                 }
             }
             // add new object and increment counts and totals
-            meals.add(index, new Meal(mealType, mealNameStr, calories));
-            totalCalories += calories;
-            if (minCalories ==0 || calories < minCalories) {
-                minCalories = calories;
+            if (run2) {
+                meals.add(index, new Meal(mealType, mealNameStr, calories));
+                totalCalories += calories;
+                if (calories < minCalories) {
+                    minCalories = calories;
+                }
+                if (calories > maxCalories) {
+                    maxCalories = calories;
+                }
+                itemCount++;
+            } else {
+                meals.add( new Meal(mealType, mealNameStr, calories));
             }
-            if (maxCalories ==0 || calories > maxCalories) {
-                maxCalories = calories;
-            }
-            itemCount++;
     }
 
     public List<Meal> getMeals() {

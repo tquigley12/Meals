@@ -1,8 +1,5 @@
 package us.mattgreen;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -19,6 +16,8 @@ public class Main {
         cookbook2 = new Cookbook();
         // Variable to determine when control break is required
         String prevMealType = " ";
+        // Variable to determine logic in addElementWithStrings
+        boolean run2;
 
         FileInput indata = new FileInput("meals_data.csv");
 
@@ -27,14 +26,7 @@ public class Main {
         // System.out.println("Reading in meals information from file...");
         while ((line = indata.fileReadLine()) != null) {
             String[] fields = line.split(",");
-            // System.out.println("checkpoint 1 ");
-            // System.out.println("fields[0] = " + fields[0]);
-            // System.out.println("fields[1] = " + fields[1]);
-            // System.out.println("fields[2] = " + fields[2]);
-            // control break logic
-            // System.out.println("prevMealType = " + prevMealType);
             if (!prevMealType.equalsIgnoreCase(fields[0]) && !prevMealType.equals(" ")) {
-                // System.out.println("checkpoint 2 ");
                 if (!breakOccurred) {
                     cookbook2.controlBreakHeader();
                 }
@@ -42,13 +34,15 @@ public class Main {
                 cookbook2 = new Cookbook();
                 breakOccurred = true;
             }
-            cookbook.addElementWithStrings(fields[0], fields[1], fields[2]);
-            cookbook2.addElementWithStrings2(fields[0], fields[1], fields[2]);
-            // copy fields[0] to prevMealType
-            // System.out.println("checkpoint 3 ");
+            run2 = false;
+            cookbook.addElementWithStrings(fields[0], fields[1], fields[2], run2);
+            run2 = true;
+            cookbook2.addElementWithStrings(fields[0], fields[1], fields[2], run2);
             prevMealType = fields[0];
         }
-        cookbook2.controlBreakLine(prevMealType);
+        if (breakOccurred) {
+            cookbook2.controlBreakLine(prevMealType);
+        }
         runMenu();
     }
 
