@@ -11,15 +11,17 @@ public class Cookbook {
     
     // Hold the next (empty) index in the array
     private int i = 0;
+    
+    // Variables used for incrementing counts and amounts for control break
+    private int totalCalories = 0;
+    private int minCalories = 0;
+    private int maxCalories = 0;
+    private int itemCount = 0;
+    private double meanCalories = 0.0;
 
     public void addElementWithStrings(String mealTypeStr, String mealNameStr, String caloriesStr) {
         MealType mealType;
 
-        // Do we have room in the array for one more?
-        // if (i < meals.size()) {
-
-            //  MealType mte = MealType.valueOf(mealNameStr.toUpperCase());
-            
             // Find the correct enum using a switch? Or use .fromValue() instead?
             switch (mealTypeStr) {
                 case "Breakfast":
@@ -47,24 +49,66 @@ public class Cookbook {
                 calories = 100;
                 System.out.println("Meal Creation Error: Invalid Calories " + caloriesStr + ", defaulted to 100.");
             }  
-            // meals[i++] = new Meal(mealType, mealNameStr, calories);
-            // meals.add( new Meal(mealType, mealNameStr, calories));
+            meals.add( new Meal(mealType, mealNameStr, calories));    
+    }
+
+    public void addElementWithStrings2(String mealTypeStr, String mealNameStr, String caloriesStr) {
+        MealType mealType;
+
+            // Find the correct enum using a switch? Or use .fromValue() instead?
+            switch (mealTypeStr) {
+                case "Breakfast":
+                    mealType = MealType.BREAKFAST;
+                    break;
+                case "Lunch":
+                    mealType = MealType.LUNCH;
+                    break;
+                case "Dinner":
+                    mealType = MealType.DINNER;
+                    break;
+                case "Dessert":
+                    mealType = MealType.DESSERT;
+                    break;
+                default:
+                    mealType = MealType.DINNER;
+                    System.out.println("Meal Creation Error: Invalid Meal Type " + mealTypeStr + ", defaulted to Dinner.");
+            }
+
+            int calories;
+
+            if (caloriesStr.matches("-?\\d+(\\.\\d+)?")) {
+                calories = Integer.parseInt(caloriesStr);
+            } else {
+                calories = 100;
+                System.out.println("Meal Creation Error: Invalid Calories " + caloriesStr + ", defaulted to 100.");
+            }  
+
             // determine location to add new object
-            Integer i = 0;
-            boolean endLoop = false;
-            while (!endLoop) {
-                if (calories > meals.get(i).getCalories()) {
-                    endLoop = true;
-                } else {
-                    i++;
+            int index = 0;
+            if (meals.size() > 0) {
+                boolean endLoop = false;
+                while (!endLoop) {
+                    if (index == meals.size()) {
+                        endLoop = true;
+                    } else { if (calories < meals.get(index).getCalories()) {
+                        endLoop = true;
+                    } else {
+                        index++;
+                    }
+                    }   
                 }
             }
-            // add new object
-            meals.add(i, new Meal(mealType, mealNameStr, calories));
+            // add new object and increment counts and totals
+            meals.add(index, new Meal(mealType, mealNameStr, calories));
+            totalCalories += calories;
+            if (minCalories ==0 || calories < minCalories) {
+                minCalories = calories;
             }
-        // } else {
-        //     System.out.println("Meal Creation Error: Items exceeded system size.  File has " + i + ", while the system can only handle " + meals.length + ".");
-        // }
+            if (maxCalories ==0 || calories > maxCalories) {
+                maxCalories = calories;
+            }
+            itemCount++;
+    }
 
     public List<Meal> getMeals() {
         return meals;
@@ -94,6 +138,33 @@ public class Cookbook {
                 System.out.println(item);
             }
         }
+    }
+    
+    public void controlBreakHeader() {
+        StringBuilder str = new StringBuilder();
+        str.append(String.format("%-15s", "Meal Type"));
+        str.append(String.format("Total\t"));
+        str.append(String.format("Mean\t\t"));
+        str.append(String.format("Min\t"));
+        str.append(String.format("Max\t"));
+        str.append(String.format("Median"));
+        System.out.println(str);
+    }
+    
+    public void controlBreakLine(String prevMealType) {
+        StringBuilder str = new StringBuilder();
+        str.append(String.format("%-15s", prevMealType));
+        str.append(itemCount);
+        str.append("\t");
+        meanCalories = (double) totalCalories/itemCount;
+        str.append(String.format("%.4f", meanCalories));
+        str.append("\t");
+        str.append(minCalories);
+        str.append("\t");
+        str.append(maxCalories);
+        str.append("\t");
+        str.append(meals.get(itemCount/2).getCalories());
+        System.out.println(str);
     }
 
 }
